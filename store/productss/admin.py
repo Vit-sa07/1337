@@ -1,18 +1,24 @@
 from django.contrib import admin
-from .models import Category, Product
+from .models import Category, Product, ProductImage
 
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'description']
-    search_fields = ['name']
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 1  # Количество дополнительных форм для загрузки изображений
 
 
-@admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'price', 'category', 'available', 'created_at']
-    list_filter = ['available', 'created_at', 'category']
-    search_fields = ['name', 'description', 'category__name']
-    date_hierarchy = 'created_at'
-    ordering = ['name']
-    fields = ['name', 'category', 'description', 'price', 'available']
+    inlines = [ProductImageInline, ]
+    list_display = ('name', 'price', 'available', 'created_at', 'updated_at')
+    list_filter = ('available', 'created_at', 'updated_at')
+    list_editable = ('price', 'available')
+    search_fields = ('name', 'description')
+
+
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name', 'description')
+
+
+admin.site.register(Category, CategoryAdmin)
+admin.site.register(Product, ProductAdmin)

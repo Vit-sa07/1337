@@ -23,3 +23,6 @@ class Review(models.Model):
     def __str__(self):
         return f'Отзыв от {self.user.username} на {self.product.name}'
 
+    class Meta:
+        verbose_name = 'Отзыв'
+        verbose_name_plural = 'Отзывы'

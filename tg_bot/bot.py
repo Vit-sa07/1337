@@ -1,4 +1,5 @@
 import json
+from io import BytesIO
 
 import telebot
 from telebot import types
@@ -10,6 +11,7 @@ bot = telebot.TeleBot(API_TOKEN)
 # Endpoint for your DRF API
 API_ENDPOINT = 'http://127.0.0.1:8000/api/users/register/'
 API_ENDPOINT_PROFILE = 'http://127.0.0.1:8000/api/users/profile/'
+API_URL = 'http://127.0.0.1:8000/api/products/products/'
 
 # User data storage
 user_data = {}
@@ -126,16 +128,35 @@ def handle_profile(message):
         bot.send_message(message.chat.id, "Failed to retrieve profile information.")
 
 
+@bot.message_handler(commands=['apple'])
+def send_apple_products(message):
+    response = requests.get(API_URL)
+    if response.status_code == 200:
+        products = response.json()
+        for product in products:
+            if product['category']['name'] == 'Apple':
+                media_group = []
+                # Добавление изображений в медиа группу
+                for image_info in product['images']:
+                    image_url = image_info['image']
+                    photo = requests.get(image_url).content
+                    media = types.InputMediaPhoto(photo)
+                    media_group.append(media)
 
-def format_user_profile(profile_data):
-    # Format the user profile data into a readable format
-    profile_str = "Your Profile:\n"
-    profile_str += f"Full Name: {profile_data.get('full_name', 'N/A')}\n"
-    profile_str += f"Phone Number: {profile_data.get('phone_number', 'N/A')}\n"
-    profile_str += f"City: {profile_data.get('city', 'N/A')}\n"
-    profile_str += f"Age: {profile_data.get('age', 'N/A')}\n"
-    profile_str += f"Referral Code: {profile_data.get('referral_code', 'N/A')}\n"
-    return profile_str
+                # Отправка текстового сообщения
+
+                # Отправка медиа группы
+                if media_group:
+                    bot.send_media_group(message.chat.id, media_group)
+                # Текстовое сообщение с описанием товара
+                product_text = f"{product['name']}\n"
+                product_text += f"{product['description']}\n"
+                product_text += f"Цена: {product['price']} руб.\n"
+                bot.send_message(message.chat.id, product_text, parse_mode='Markdown')
+
+
+    else:
+        bot.send_message(message.chat.id, 'Извините, произошла ошибка при получении данных.')
 
 
 @bot.message_handler(commands=['referral'])

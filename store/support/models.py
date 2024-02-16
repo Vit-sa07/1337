@@ -18,6 +18,10 @@ class Ticket(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = 'Обращение'
+        verbose_name_plural = 'Обращения'
+
 
 class Response(models.Model):
     ticket = models.ForeignKey(Ticket, related_name='responses', on_delete=models.CASCADE, verbose_name='Запрос')
@@ -27,3 +31,8 @@ class Response(models.Model):
 
     def __str__(self):
         return f'Ответ на {self.ticket.title}'
+
+    class Meta:
+        verbose_name = 'Ответ'
+        verbose_name_plural = 'Ответы'
+
