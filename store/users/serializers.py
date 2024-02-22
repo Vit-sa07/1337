@@ -45,3 +45,5 @@ class UserProfileSerializer(serializers.ModelSerializer):
                 setattr(user_profile, attr, value)
             user_profile.save()
         return user_profile
+
+
