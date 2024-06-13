@@ -5,7 +5,7 @@ import telebot
 from telebot import types
 import requests
 
-API_TOKEN = '6710651165:AAH-55n4WNu0-JBqGHQMdJ0mFJGwb_mvM44'
+API_TOKEN = 'Токен'
 bot = telebot.TeleBot(API_TOKEN)
 
 # Endpoint for your DRF API
